@@ -38,11 +38,14 @@ class Transaction:
         transaction_amount = Decimal(row[CapitalOneAccountFields.TRANSACTION_AMOUNT.value])  # fmt: skip
         amount_multiplier = -1 if transaction_type == "Debit" else 1
 
+        description = row[CapitalOneAccountFields.TRANSACTION_DESCRIPTION.value]
+        description_formatted = description.translate(str.maketrans("", "", ",."))
+
         return cls(
             id=None,
             date=date_formatted,
             account=row[CapitalOneAccountFields.ACCOUNT_NUMBER.value],
-            description=row[CapitalOneAccountFields.TRANSACTION_DESCRIPTION.value],
+            description=description_formatted,
             category="None",  # Will be defined by import rules
             amount=transaction_amount * amount_multiplier,
         )
@@ -54,11 +57,14 @@ class Transaction:
 
         amount = -Decimal(debit) if debit != 0 else Decimal(credit)
 
+        description = row[CapitalOneCreditCardFields.DESCRIPTION.value]
+        description_formatted = description.translate(str.maketrans("", "", ",."))
+
         return cls(
             id=None,
             date=row[CapitalOneCreditCardFields.POSTED_DATE.value],
             account=row[CapitalOneCreditCardFields.CARD_NUMBER.value],
-            description=row[CapitalOneCreditCardFields.DESCRIPTION.value],
+            description=description_formatted,
             category=row[CapitalOneCreditCardFields.CATEGORY.value],
             amount=amount,
         )
